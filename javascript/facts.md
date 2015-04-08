@@ -13,7 +13,7 @@
 
 ## Variable Hoisting
 
-## (?Expressions/Statements?) That Form Scopes
+## Constructs That Form Scopes
   - functions
   - Block Scopes
   - with
