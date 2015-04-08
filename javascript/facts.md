@@ -27,7 +27,7 @@
   - eval & with
   - they prevent the engine from performing compile-time optimizations regarding scope look-up, because the engine has to assume pessimistically that such optimizations may be invalid during runtime
 
-- Operator precedence
+### Operator precedence
   - '&&' > '||' > '? :'
 
 ### Object Names (as seen when using dev tools)
