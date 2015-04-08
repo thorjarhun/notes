@@ -7,8 +7,7 @@
 - rarely essential but often useful and just occasionally downright elegant
 - Good Quote: Semicolons partition statements. Comma operators partition expressions within statements.
 
-## Labeled Statements
-- https://github.com/getify/You-Dont-Know-JS/blob/master/types%20&%20grammar/ch5.md#contextual-rules
+## [Labeled Statements](https://github.com/getify/You-Dont-Know-JS/blob/master/types%20&%20grammar/ch5.md#contextual-rules)
 
 ## Getters & Setters
 
@@ -37,24 +36,18 @@
 
 
 
-// <page break>
-
 # Cool Snippets:
+###### Test Primality
 ```javascript
 // Check if a number is prime
-var isPrime = function(n) {
+function isPrime(n) {
   var d = Math.ceil(Math.sqrt(n));
   while(n%(d--) && d);
   return !d;
 };
 ```
-```javascript
-// Fibonacci generator
-var n = 15;
-for (var i=2, r=[0,1]; i < n; r.push(r[i-1] + r[i-2]), i++);
-```
 
-// Silly Coercion (https://github.com/getify/You-Dont-Know-JS/blob/master/types%20&%20grammar/ch4.md)
+###### [Silly Coercion](https://github.com/getify/You-Dont-Know-JS/blob/master/types%20&%20grammar/ch4.md#false-y-comparisons)
 ```javascript
 [] == ![]       // true - WHAT?!?
 2 == [2];       // true - WHAT?!?
@@ -67,10 +60,8 @@ for (var i=2, r=[0,1]; i < n; r.push(r[i-1] + r[i-2]), i++);
 NaN == NaN      // false
 ```
 
-
-
-// Prototypal Inheritance (I don't think I like this inheritance strategy and I'm not sure if subclasses will have the proper __proto__ chain.)
-// http://javascriptissexy.com/oop-in-javascript-what-you-need-to-know/
+###### [Prototypal Inheritance](http://javascriptissexy.com/oop-in-javascript-what-you-need-to-know/)
+I don't think I like this inheritance strategy and I'm not sure if subclasses will have the proper *\__proto\__* chain.
 ```javascript
 Object.create = function (proto) {
   //It creates a temporary constructor F()
@@ -96,6 +87,7 @@ function inheritPrototype(childObject, parentObject) {
 }
 ```
 
+###### Internals Of The *new* Keyword
 ```javascript
 // Pseudo-code for the 'new' operator
 function NEW(f) {
@@ -128,7 +120,7 @@ function NEW3(f) {
 function Foo (arg) {
   this.prop = arg;
 }
-Foo.prototype.inherited = 'baz';
+Foo.prototype.inherited_prop = 'baz';
 
 var a = NEW(Foo, 'bar');
 var b = NEW2(Foo, 'bar');
@@ -138,6 +130,7 @@ console.dir(b);
 console.dir(c);
 ```
 
+###### Async Timeout
 ```javascript
 // Wrapping a callback with a timeout
 function timeoutify(fn,delay) {
@@ -168,6 +161,7 @@ setTimeout( timeoutify( foo, 500 ), 450, null, "data"); // "data"
 setTimeout( timeoutify( foo, 500 ), 550, null, "data"); // Error
 ```
 
+###### Make A Function Asynchronous
 ```javascript
 // Force a function to be async (https://github.com/getify/You-Dont-Know-JS/blob/master/async%20&%20performance/ch2.md)
 // Note: I mostly understand how this works.
@@ -212,8 +206,8 @@ asyncify( result )();                 // a: 1
 a++;
 ```
 
+###### Spread/Unwrap/Unpack/Destructure Arguments
 ```javascript
-// Unwrap/Spread Arguments
 function spread(fn) {
   return Function.apply.bind( fn, null );
 }
@@ -226,4 +220,4 @@ spread_func([20, 30]);  // 20, 30
 
 
 // Questions
-- Does the __proto__ chain of an object instance match the constructors .prototype chain or the constructors .prototype.__proto__ chain?
+- Does the \__proto\__ chain of an object instance match the constructors .prototype chain or the constructors .prototype.\__proto\__ chain?
