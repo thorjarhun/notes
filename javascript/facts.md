@@ -37,7 +37,7 @@
 
 
 # Cool Snippets:
-###### Test Primality
+##### Test Primality
 ```javascript
 // Check if a number is prime
 function isPrime(n) {
@@ -47,7 +47,7 @@ function isPrime(n) {
 };
 ```
 
-###### [Silly Coercion](https://github.com/getify/You-Dont-Know-JS/blob/master/types%20&%20grammar/ch4.md#false-y-comparisons)
+##### [Silly Coercion](https://github.com/getify/You-Dont-Know-JS/blob/master/types%20&%20grammar/ch4.md#false-y-comparisons)
 ```javascript
 [] == ![]       // true - WHAT?!?
 2 == [2];       // true - WHAT?!?
@@ -60,7 +60,7 @@ function isPrime(n) {
 NaN == NaN      // false
 ```
 
-###### [Prototypal Inheritance](http://javascriptissexy.com/oop-in-javascript-what-you-need-to-know/)
+##### [Prototypal Inheritance](http://javascriptissexy.com/oop-in-javascript-what-you-need-to-know/)
 I don't think I like this inheritance strategy and I'm not sure if subclasses will have the proper *\__proto\__* chain.
 ```javascript
 Object.create = function (proto) {
@@ -87,7 +87,7 @@ function inheritPrototype(childObject, parentObject) {
 }
 ```
 
-###### Internals Of The *new* Keyword
+##### Internals Of The *new* Keyword
 ```javascript
 // Pseudo-code for the 'new' operator
 function NEW(f) {
@@ -130,7 +130,7 @@ console.dir(b);
 console.dir(c);
 ```
 
-###### Async Timeout
+##### Async Timeout
 ```javascript
 // Wrapping a callback with a timeout
 function timeoutify(fn,delay) {
@@ -161,7 +161,7 @@ setTimeout( timeoutify( foo, 500 ), 450, null, "data"); // "data"
 setTimeout( timeoutify( foo, 500 ), 550, null, "data"); // Error
 ```
 
-###### Make A Function Asynchronous
+##### Make A Function Asynchronous
 ```javascript
 // Force a function to be async (https://github.com/getify/You-Dont-Know-JS/blob/master/async%20&%20performance/ch2.md)
 // Note: I mostly understand how this works.
@@ -206,7 +206,7 @@ asyncify( result )();                 // a: 1
 a++;
 ```
 
-###### Spread/Unwrap/Unpack/Destructure Arguments
+##### Spread/Unwrap/Unpack/Destructure Arguments
 ```javascript
 function spread(fn) {
   return Function.apply.bind( fn, null );
