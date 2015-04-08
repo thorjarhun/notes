@@ -20,25 +20,25 @@ myObjInstance.__proto__ == Object.getPrototypeOf(myObjInstance)
 ```
 
 ## Inheritance
-###### *\__proto\__*
+##### *\__proto\__*
 - When an object 'rabbit' inherits from another object 'animal', that means there is a special property rabbit.*\__proto\__* = animal.
 - When a 'rabbit' property is accessed, and the interpreter can't find it in 'rabbit', it follows the *\__proto\__* link and searches in 'animal'.
 - For methods along the *\__proto\__* chain, *this* still refers to the object on which the method was invoked. In other words, the value of 'this' for function properties is set to the object, not its prototype.
 - The object referenced by *\__proto\__* is its prototype.
 - *\__proto\__* is referred to as [[Prototype]] in the specification.
 
-###### constructor
+##### constructor
 - An object has a built-in property named 'constructor', meant to reference the function which made the object.
 - When you declare a function, the interpreter creates the new function object with a 'prototype' property. By default, the 'prototype' property has a 'constructor' property set to the function itself.
 
-###### 'new'
+##### 'new'
 - A 'new' function call returns an object with the *\__proto\__* set to the function's 'prototype'.
 
-###### for..in loop
+##### for..in loop
 - iterates through all properties of an object and its *\__proto\__* chain
 - Built-in properties and methods are not listed because they have a special [[Enumerable]] flag set to false.
 
-###### instanceof operator
+##### instanceof operator
 - To resolve if obj instanceof F, check if any object on the *\__proto\__* chain from obj is equal to F.prototype.
 
 ##### Pseudo-Classical Inheritance
