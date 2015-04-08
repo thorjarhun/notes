@@ -1,11 +1,11 @@
-- Comma Operator
-  - lowest operator precedence
-  - evaluates both of its operands (from left to right) and returns the value of the second operand
-  - Ex. (1, 2, 3, 4) === 4
-        (((1, 2), 3), 4) === 4
-  - that lets you specify more than one expression where JavaScript expects only one
-  - rarely essential but often useful and just occasionally downright elegant
-  - Good Quote: Semicolons partition statements. Comma operators partition expressions within statements.
+# Comma Operator
+* lowest operator precedence
+* evaluates both of its operands (from left to right) and returns the value of the second operand
+* Ex. (1, 2, 3, 4) === 4
+      (((1, 2), 3), 4) === 4
+* that lets you specify more than one expression where JavaScript expects only one
+* rarely essential but often useful and just occasionally downright elegant
+* Good Quote: Semicolons partition statements. Comma operators partition expressions within statements.
 
 - Labeled Statements (https://github.com/getify/You-Dont-Know-JS/blob/master/types%20&%20grammar/ch5.md#contextual-rules)
 
@@ -14,22 +14,22 @@
 - Variable Hoisting
 
 - (?Expressions/Statements?) That Form Scopes
-  - functions
-  - Block Scopes
-    - with
-    - catch
-    - let
-    - const
-  - eval (verify)
-  - new Function (verify)
+- functions
+- Block Scopes
+- with
+- catch
+- let
+- const
+- eval (verify)
+- new Function (verify)
 
 - Performance Busters
-  - eval & with
-    - they prevent the engine from performing compile-time optimizations regarding scope look-up, because the engine has to assume pessimistically
-      that such optimizations may be invalid during runtime
+- eval & with
+- they prevent the engine from performing compile-time optimizations regarding scope look-up, because the engine has to assume pessimistically
+  that such optimizations may be invalid during runtime
 
 - Operator precedence
-  - '&&' > '||' > '? :'
+- '&&' > '||' > '? :'
 
 - Object Names (as seen when using dev tools)
 
