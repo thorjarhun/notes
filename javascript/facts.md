@@ -1,59 +1,61 @@
-# Comma Operator
-* lowest operator precedence
-* evaluates both of its operands (from left to right) and returns the value of the second operand
-* Ex. (1, 2, 3, 4) === 4
+## Comma Operator
+- lowest operator precedence
+- evaluates both of its operands (from left to right) and returns the value of the second operand
+- Ex. (1, 2, 3, 4) === 4
       (((1, 2), 3), 4) === 4
-* that lets you specify more than one expression where JavaScript expects only one
-* rarely essential but often useful and just occasionally downright elegant
-* Good Quote: Semicolons partition statements. Comma operators partition expressions within statements.
+- that lets you specify more than one expression where JavaScript expects only one
+- rarely essential but often useful and just occasionally downright elegant
+- Good Quote: Semicolons partition statements. Comma operators partition expressions within statements.
 
-- Labeled Statements (https://github.com/getify/You-Dont-Know-JS/blob/master/types%20&%20grammar/ch5.md#contextual-rules)
+## Labeled Statements
+- https://github.com/getify/You-Dont-Know-JS/blob/master/types%20&%20grammar/ch5.md#contextual-rules
 
-- Getters & Setters
+## Getters & Setters
 
-- Variable Hoisting
+## Variable Hoisting
 
-- (?Expressions/Statements?) That Form Scopes
-- functions
-- Block Scopes
-- with
-- catch
-- let
-- const
-- eval (verify)
-- new Function (verify)
+## (?Expressions/Statements?) That Form Scopes
+  - functions
+  - Block Scopes
+  - with
+  - catch
+  - let
+  - const
+  - eval (verify)
+  - new Function (verify)
 
-- Performance Busters
-- eval & with
-- they prevent the engine from performing compile-time optimizations regarding scope look-up, because the engine has to assume pessimistically
-  that such optimizations may be invalid during runtime
+## Performance Busters
+  - eval & with
+  - they prevent the engine from performing compile-time optimizations regarding scope look-up, because the engine has to assume pessimistically that such optimizations may be invalid during runtime
 
 - Operator precedence
-- '&&' > '||' > '? :'
+  - '&&' > '||' > '? :'
 
-- Object Names (as seen when using dev tools)
+## Object Names (as seen when using dev tools)
 
-- Functions With Custom 'toString'/'valueOf'
+## Functions With Custom 'toString'/'valueOf'
 
 
 
 // <page break>
 
-- Cool Snippets:
+# Cool Snippets:
+```javascript
 // Check if a number is prime
 var isPrime = function(n) {
   var d = Math.ceil(Math.sqrt(n));
   while(n%(d--) && d);
   return !d;
 };
-
-
+```
+```javascript
 // Fibonacci generator
 var n = 15;
 for (var i=2, r=[0,1]; i < n; r.push(r[i-1] + r[i-2]), i++);
-
+```
 
 // Silly Coercion (https://github.com/getify/You-Dont-Know-JS/blob/master/types%20&%20grammar/ch4.md)
+```javascript
 [] == ![]       // true - WHAT?!?
 2 == [2];       // true - WHAT?!?
 "" == [null];   // true - WHAT?!?
@@ -63,11 +65,13 @@ for (var i=2, r=[0,1]; i < n; r.push(r[i-1] + r[i-2]), i++);
 "0" == false;   // true - WHAT?!?
 
 NaN == NaN      // false
+```
 
 
 
 // Prototypal Inheritance (I don't think I like this inheritance strategy and I'm not sure if subclasses will have the proper __proto__ chain.)
 // http://javascriptissexy.com/oop-in-javascript-what-you-need-to-know/
+```javascript
 Object.create = function (proto) {
   //It creates a temporary constructor F()
   function F() {}
@@ -80,7 +84,7 @@ Object.create = function (proto) {
   return new F();
 };
 function inheritPrototype(childObject, parentObject) {
-  // As discussed above, we use the Crockford’s method to copy the properties and methods from the parentObject onto the childObject
+  // As discussed above, we use the Crockfordâ€™s method to copy the properties and methods from the parentObject onto the childObject
   // So the copyOfParent object now has everything the parentObject has
   var copyOfParent = Object.create(parentObject.prototype);
 
@@ -90,8 +94,9 @@ function inheritPrototype(childObject, parentObject) {
   // Then we set the childObject prototype to copyOfParent, so that the childObject can in turn inherit everything from copyOfParent (from parentObject)
   childObject.prototype = copyOfParent;
 }
+```
 
-
+```javascript
 // Pseudo-code for the 'new' operator
 function NEW(f) {
   var obj, ret, proto;
@@ -131,8 +136,9 @@ var c = NEW3(Foo, 'bar');
 console.dir(a);
 console.dir(b);
 console.dir(c);
+```
 
-
+```javascript
 // Wrapping a callback with a timeout
 function timeoutify(fn,delay) {
     var intv = setTimeout( function(){
@@ -160,8 +166,9 @@ function foo(err,data) {
 //ajax( "http://some.url.1", timeoutify( foo, 500 ) );
 setTimeout( timeoutify( foo, 500 ), 450, null, "data"); // "data"
 setTimeout( timeoutify( foo, 500 ), 550, null, "data"); // Error
+```
 
-
+```javascript
 // Force a function to be async (https://github.com/getify/You-Dont-Know-JS/blob/master/async%20&%20performance/ch2.md)
 // Note: I mostly understand how this works.
 function asyncify(fn) {
@@ -203,8 +210,9 @@ var a = 0;
 setTimeout( asyncify( result ), 0 );  // a: 1
 asyncify( result )();                 // a: 1
 a++;
+```
 
-
+```javascript
 // Unwrap/Spread Arguments
 function spread(fn) {
   return Function.apply.bind( fn, null );
@@ -214,7 +222,7 @@ var func = function(x, y) {
 };
 var spread_func = spread(func);
 spread_func([20, 30]);  // 20, 30
-
+```
 
 
 // Questions
