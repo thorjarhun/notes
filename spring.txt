@@ -1,0 +1,226 @@
+- XML Configuration
+  - beans: default-init-method, default-destroy-method
+    - bean: id, class, autowire, scope, parent, abstract, init-method, destroy-method
+      - property: name, value, ref
+        - bean
+        - idref
+        - value
+        - ref: bean, local
+        - list: merge
+          - ref
+          - value
+        - map
+          - entry: key
+            - ref
+      - constructor-arg: index, value, type
+      - qualifier: value
+    - alias: name (bean's id), alias
+  - context:annotation-config
+  - context:component-scan: base-package
+  - aop:aspectj-autoproxy
+  - aop:config
+    - aop:aspect: id, ref
+      - aop:pointcut: id, expression
+      - aop:around/aop:before/aop:after/ect: pointcut, pointcut-ref (pointcut's id), method, arg-names
+  - mvc:annotation-driven
+  - jms:listener-container: container-type, connection-factory, acknowledge
+    - jms:listener: destination, ref, method
+
+- Bean Scopes
+  - Singleton (default) - initialized once per Spring container when ApplicationContext is instantiated
+  - Prototype - new bean created with every (bean) request or reference
+  - Request - new bean per servlet request
+  - Session - new bean per session
+  - Global Session - new bean per global HTTP session (portlet context)
+
+- Annotations
+  - Dependency Injection
+    - @Resource - used to request DI on instance variables or bean property setter methods. Optionally accepts a name attribute.
+    - @Autowired - similar to @Resource but also works on constructor methods and does not accept a name attribute. This is the most powerful
+      injection annotation and the others aren't necessarily needed.
+      - @Qualifier - used on a class to bind it to a string and with @Autowired to reference a class. By default, the qualifier for a bean class is
+        the same as its default name, the class name in lower camel-case.
+    - @Inject
+    - @Required - used to indicate that a bean property must be populated at configuration time, through an explicit property value in a bean
+      definition or through autowiring.
+  - Registering Beans / (Stereotyped Classes) / (Managed Components)
+    - @Component - a generic stereotype for any Spring-managed component.
+    - @Controller
+    - @Repository
+    - @Service
+    - @RestController - shorthand for @Controller and @ResponseBody.
+  - JMS
+    - @EnableJms - triggers the discovery of methods annotated with @JmsListener.
+    - @JmsListener - defines the name of the destination that a method should listen to and the reference to the JmsListenerContainerFactory to used
+      to create the underlying message listener container.
+  - @SpringBootApplication - shorthand for @Configuration, @EnableAutoConfiguration, and @ComponentScan.
+  - @Configuration - tags a class to as a source of bean definitions for the application context.
+    - @Bean - used to indicate that a method instantiates, configures, and initializes a new object to be managed by the Spring IoC container.
+    - @Import - used to load @Bean definitions from another configuration class.
+    - @Scope
+  - @EnableAutoConfiguration
+  - @ComponentScan - tells Spring to autodetect and register Spring beans. Optionally accepts a basePackages attribute for the root package to
+    search or uses the class's package if the basePackages attribute is not supplied.
+  - @Profile
+  - @Aspect
+  - @Value
+  - @PostConstruct
+  - @PreDestroy
+  - @RequestMapping
+  - @RequestParam
+  - @PathVariable
+  - @ModelAttribute
+  - @Primary
+  - @Pointcut
+    - execution()
+    - within()
+    - args()
+    - @annotation()
+  - Advice Types
+    - @Before
+    - @After
+    - @AfterReturning
+    - @AfterThrowing
+    - @Around
+    - arguments:
+      - pointcut (default)
+      - returning
+      - throwing
+
+- Useful Interfaces
+  - Bean Interfaces
+    - ApplicationContextAware
+    - BeanNameAware
+    - InitializingBean
+    - DisposableBean
+    - ApplicationEventPublisherAware
+  - ApplicationListener
+  - BeanPostProcessor
+  - BeanFactoryPostProcessor
+  - RowMapper<>
+
+- Useful Superclasses
+  - ApplicationEvent
+
+- Useful Classes
+  - javax
+    - persistence
+      - Entity
+      - Id
+    - sql
+      - DataSource
+  - org
+    - hibernate
+      - SessionFactory
+    - springframework
+      - beans
+        - factory
+          - annotation
+            - AutowiredAnnotationBeanPostProcessor*
+            - RequiredAnnotationBeanPostProcessor*
+          - BeanFactory
+          - config
+            - PropertyPlaceholderConfigurer*
+          - xml
+            - XmlBeanFactory
+      - context
+        - ApplicationContext
+        - support
+          - AbstractApplicationContext
+          - ClassPathXmlApplicationContext
+          - ResourceBundleMessageSource*
+      - core
+        - io
+          - ClassPathResource
+          - Resource
+      - jdbc
+        - core
+          - JdbcTemplate
+          - RowMapper
+          - namedparam
+            - NamedParameterJdbcTemplate
+      - remoting
+        - httpinvoker
+          - HttpInvokerProxyFactoryBean*
+          - HttpInvokerServiceExporter*
+- * : used in bean configuration xml
+
+- Event Handling
+  - Publisher
+  - Listener
+  - Event
+
+- Functional Programming
+  - Break problem down into different functions
+  - Each function accomplishes a different unit of work
+  - Functions call each other
+
+- Object Oriented Programming
+  - Objects mirror entities in project space
+
+- Aspect Oriented Programming
+  - Aspect
+    - special class with special privileges
+  - Aspect Configuration
+    - tells which methods of which Objects that Aspects apply to
+  - Aspects run before or after other methods based on configuration
+  - Terminology
+    - JoinPoint - any point in your program such as field access, method execution, exception handling, etc. Spring only supports method execution joinpoints.
+    - Advice - the actual action (piece of code) to be taken either before or after method execution
+    - Pointcut - a set of one or more joinpoints where an advice should be executed; specified using Spring expression language or patterns.
+    - Aspect - a class in Spring AOP that contains advices and joinpoints
+    - Introduction - allows you to add new methods or attributes to existing classes
+    - Target Object - a proxy object that is advised by one or more aspects
+    - Interceptor - a class like aspect that contains one advice only
+    - AOP Proxy - used to implement aspect contracts, created by AOP framework. In Spring, it will be a JDK dynamic proxy or CGLIB proxy.
+    - Weaving - the process of linking aspect with other application types or objects to create an advised object. Spring framework performs weaving at runtime.
+
+- AOP Implementations
+  - Spring AOP
+  - Apache AspectJ
+  - JBoss AOP
+
+Questions:
+- 12
+  - Why would a bean want to access the context?
+
+- MVC
+  - DispatcherServlet - intercepts requests, delegates the requests to appropriate controllers, and renders the view
+    - follows the FrontController design pattern
+    - Request Flow:
+      1. The request is handled by the doRequest method of the DispatcherServlet.
+        - it first sets several attributes
+      2. The request is then converted into a multipart request if a multipart resolver is available.
+      3. The Handler is then obtained for the current request.
+        - The code may use the URL, session state, or other parameters to determine which handler satisfies the current request.
+        - The Handler returned is of type HandlerExecutionChain and contains the interceptors and the Handler. ??
+      4. The DispatcherServlet looks for the HandlerAdapter for the current request.
+      5. Apply the preHandle method of all interceptors.
+      6. Invoke the handle method using the HandleAdapter .handle method. This returns an object of type ModelAndView.
+      7. If the returned ModelAndView object does not contain a view name or a view object then the configured RequestToViewNameTranslator will
+        translate the current request into a view name. Otherwise, a ViewResolver is used to resolve the view from the view name.
+      8. The view is then rendered.
+      9. Call the triggerAfterCompletion methods of the HandlerInceptors.
+  - HandlerMappings
+  - HandlerAdapter
+
+- JMS
+  - used for asynchronous message communication
+  - JMS provider - offers services (JMS queues) and topics (JMS topics)
+    - The messaging system (MOM) that implements JMS in addition to other administrative and control functionality required of a full-featured
+      messaging product (IBM MQ, Active MQ). A message broker or agent (like a post office/postman).
+  - Broker (message queue) - holds messages between sender/producer/publisher and listener/consumer/subscriber
+  - JMS client - Java applications that produce or receive messages.
+  - Messaging Models
+    - Point-to-Point (PTP)
+      - built around the concept of message queues
+      - each message has only one consumer
+      - the consumer acknowledges the successful processing of a message
+    - Publish-Subscribe systems
+      - uses a "topic" to send and receive messages
+      - each message has multiple consumers
+      - a client that subscribes to a topic can consume only messages published after the client has created a subscription, and the subscriber must
+        continue to be active in order for it to consume messages
+      - Durable or Non-Durable
+        - Durable - messages are stored in a database
+  - ConnectionFactory -> Connection -> Session -> Message Producer/Consumer -> Send/Receive

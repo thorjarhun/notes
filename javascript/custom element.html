@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>JS Bin</title>
+  <script>
+    var proto = Object.create(HTMLElement.prototype);
+
+    proto.createdCallback = function() {
+      this.textContent = 'FrontTrends \o/';
+    };
+
+    document.registerElement('front-trends', {
+      prototype: proto
+    });
+  </script>
+</head>
+<body>
+<front-trends></front-trends>
+</body>
+</html>

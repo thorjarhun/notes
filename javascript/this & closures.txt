@@ -1,0 +1,277 @@
+﻿closure - an inner function that has access to the outer (enclosing) function's variables
+        - an expression (typically a function) that can have free variables together with an environment that binds those variables (that "closes" the expression)
+  - Three scope chains:
+    - its own scope (variables defined between its curly brackets)
+    - the outer function's variables and parameters
+    - the global variables
+
+this - a variable with the value of the object that invokes the function where 'this' is used
+     - the value of 'this' is dynamic; it is determined when the function is called, not when it is declared
+
+ECMAScript recognises two categories of objects:
+  - Native Objects - belong to the language
+    - Built-in Objects
+  - Host Objects - provided by the environment (e.g. DOM nodes)
+
+The Execution Context
+  - all javascript code is executed in an execution context
+    - global code gets executed in global execution context
+    - each invocation of a function (possibly as a constructor) has an associated execution context
+      - when a function is called it enters an execution context
+      - if another function is called (or the same function recursively) a new execution context is created and execution enters that context
+        for the duration of the function call, before returning to the original execution context when the function returns
+      - running javascript code forms a stack of execution contexts
+    - code executed with the eval function gets a distinct execution context
+  - when an execution context is created a number of things happen in a defined order
+    1. In the execution context of a function, an "Activation" object is created.
+      - The Activation object is not a normal object because it has no prototype and cannot be directly referenced by javascript code but
+        it ends up having accessible named properties.
+    2. An 'arguments' object is created.
+      - The 'arguments' object is an array-like object with integer indexed members corresponding with the arguments passed to the function
+        call, in order. It also has 'length' and 'callee' properties.
+      - A reference to the 'arguments' object is defined on the Activation object.
+    3. The execution context is assigned a scope.
+      - A scope consists of a list (or chain) of objects).
+      - Each function object has an internal [[scope]] property that also consists of a list (or chain) of objects.
+      - The scope that is assigned to the execution context of a function call consists of the list referred to by the [[scope]] property
+        of the corresponding function object with the Activation object added at the front of the chain (or the top of the list).
+    4. The process of "variable instantiation" takes place using an object that ECMA 262 refers to as the "Variable" object.
+      - The Activation object is used as the Variable object. They are are the same object!
+        - This is why the identifier 'arguments' is treated as if it was a function's local variable.
+      - A reference to each of the function's formal parameters is defined on the Variable object.
+      - A reference to each of the function's inner function definitions is defined on the Variable object.
+      - A reference to each of the function's local variables is defined on the Variable object.
+        - The properties created on the Variable object that correspond with declared local variables are initially assigned 'undefined'
+          values during variable instantiation. The actual initialization of local variables does not happen until the evaluation of the
+          corresponding assignment expressions during the execution of the function body code.
+    5. A value is assigned for use with the 'this' keyword.
+      - If the value assigned (internally) is null then the this keyword will reference to the global object.
+  - The global execution context does not have arguments so it does not need a defined Activation object to refer to them.
+
+Scope chains and [[scope]]
+  - The scope chain of the execution context for a function call is constructed by adding the execution context's Activation/Variable object
+    to the front of the scope chain held in the function object's [[scope]] property.
+  - ECMAScript functions are objects created during variable instantiation from function declarations, during the evaluation of function
+    expressions, or by invoking the 'Function' constructor.
+    - Function objects created with the 'Function' constructor always have a [[scope]] property referring to a scope chain that only
+      contains the global object.
+    - Function objects created with function declarations or function expressions have the scope chain of the execution context in which
+      they are created assigned to their internal [[scope]] property.
+
+Processing Javascript:
+  1. Variable Instantiation - a pre-processing stage
+    - First, the interpreter scans the code for function declarations. For each function declaration, it creates the function from it and puts it
+      into 'window'. Function declarations are initialized before the code is executed.
+    - Second, the interpreter scans for 'var' declarations and creates 'window' properties. All variables start as 'undefined'.
+
+Other remarks:
+  - Static variables/methods (properties on a function) and functional decorators (wrappers) are not friends.
+
+/*
+Four Scents of 'this':
+  1. when called as a method
+  2. when called as a function
+  3. in 'new'
+  4. explicit 'this'
+
+Four Tricky Cases for Resolving 'this':
+  1. 'this' when used in a method passed as a callback
+  2. 'this' inside a closure
+  3. 'this' when method is assigned to a variable
+  4. 'this' when borrowing methods
+*/
+Tricky Cases:
+  1. 'this' used in a method passed as a callback
+    Ex.
+      <button class="buttonError">Show Golfer: Non-Bind Example</button>
+      <button class="buttonGood">Show Golfer: Bind Example</button>
+      <script>
+        var user = {
+          foo: 'bar',
+          clickHandler: function (event) {
+            console.log(this.foo);
+          }
+        };
+
+        // Pass the user object's clickHandler method as a callback to the button's click method
+        $(".buttonError").click(user.clickHandler); // undefined (this === window)
+        $(".buttonGood").click(user.clickHandler.bind(user)); // 'bar' (this === user)
+      </script>
+    Ex.
+      <script>
+        ​var clientData = {
+          fullName: "Not Set",
+          setUserName: function (firstName, lastName)  {
+            this.fullName = firstName + " " + lastName;
+          }
+        };
+        var getUserInput = function(firstName, lastName, callback)  {
+          callback(firstName, lastName);
+        };
+        getUserInput("John", "Smith", clientData.setUserName);  // window.fullName = "John Smith"
+        
+        var getUserInput2 = function(firstName, lastName, callback, callbackObj)  {
+          callback.apply(callbackObj, [firstName, lastName]);
+        };
+        getUserInput2("John", "Smith", clientData.setUserName, clientData); // clientData.fullName = "John Smith"
+      </script>
+  2. 'this' inside a closure
+    Ex.
+      <script>
+        var user = {
+          tournament:"The Masters",
+          data: [
+            {name:"T. Woods", age:37},
+            {name:"P. Mickelson", age:43}
+          ],
+          clickHandler: function (event) {
+            //var theUserObj = this;
+            this.data.forEach (function (person) {
+              console.log(person.name + " is playing at " + this.tournament);
+              //console.log(person.name + " is playing at " + theUserObj.tournament);
+            })
+          }
+        };
+
+        user.clickHandler();
+        // T. Woods is playing at undefined​
+        // P. Mickelson is playing at undefined​
+      </script>
+    Ex.
+      <script>
+        var user = {
+          data: {
+            log: function(func) {
+              console.log(this);    // user.data
+              console.log(func());  // window
+            }
+          }
+        };
+
+        user.data.log(function() { return this; });
+        // user.data
+        // window
+      </script>
+    Ex.
+      <script>
+        var user = {
+          data: {
+            log: function(that) {
+              console.log(this);  // user.data
+              console.log(that);  // window
+            }
+          }
+        };
+
+        user.data.log(this);
+        // user.data
+        // window
+      </script>
+    Ex.
+      <script>
+        var user = {
+          data: {
+            log: function() {
+              console.log(this);        // user.data
+              (function() {
+                console.log(this);      // window
+              })();
+              var func = function(that) {
+                console.log(this);      // window
+                console.log(that);      // user.data
+              };
+              func(this);
+            }
+          }
+        };
+
+        user.data.log();
+      </script>
+    Ex.
+      <script>
+        var obj = {
+          go: function() { console.log(this); }
+        };
+        obj.go();         // obj
+        (obj.go)();       // obj
+        (a = obj.go)();   // window
+        (0 || obj.go)();  // window
+      </script>
+  3. 'this' when method is assigned to a variable
+    Ex.
+      var foo = user.data.log; // user.data.log.bind(user.data);
+  4. 'this' when borrowing methods
+    Ex.
+      var foo = {}, args = [];
+      user.data.log.apply(foo, args);
+
+Interesting Snippets:
+<script>
+var func = function() {
+  var foo = "bar";
+  return {
+    funcA: function() {
+      return this;
+    },
+    funcB: function() {
+      return foo;
+    },
+    funcC: function(str) {
+      return eval(str);
+    }
+  };
+};
+var f = func();
+f.funcA2 = function() {
+  return this;
+};
+f.funcB2 = function() {
+  return foo;
+};
+f.funcC2 = function(str) {
+  return eval(str);
+};
+f.funcA();      // f
+f.funcA2();     // f
+f.funcB();      // "bar"
+f.funcB2();     // undefined
+f.funcC("foo")  // "bar"
+f.funcC2("foo") // undefined
+</script>
+
+<script>
+var func = function() {
+  var foo = { bar: 1 };
+  return {
+    funcA: function() {
+      return foo.bar;
+    },
+    funcB: function(new_foo) {
+      return foo = new_foo;
+    }
+  };
+};
+var f = func();
+f.funcA();              // 1
+f.funcB({ bar: 2 });    // 2
+f.funcA();              // 2
+</script>
+
+<script>
+var a = function() {
+  var foo = function() {
+    console.log("foo", this);
+  };
+  this.bar = function() {
+    console.log("bar", this);
+    foo();
+  };
+  this.bar2 = function() {
+    console.log("bar2", this);
+    foo.apply(this);
+  };
+};
+var b = new a();
+b.bar();  // bar: a, foo: window
+b.bar2(); // bar2: a, foo: a
+</script>

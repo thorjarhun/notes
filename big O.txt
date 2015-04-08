@@ -1,0 +1,8 @@
+O(1)			- constant
+O(log n)		- logarithmic
+O(n)			- linear
+O(n log n) = O(log n!)	- loglinear or quasilinear
+O(n ^ 2)		- quadratic
+O(n ^ c)		- polynomial
+O(c ^ n)		- exponential
+O(n!)			- factorial

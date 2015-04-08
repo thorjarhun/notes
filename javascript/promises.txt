@@ -1,0 +1,14 @@
+- Every time you call 'then(..)' on a Promise, it creates and returns a new Promise, which we can chain with.
+- Inside the fulfillment/rejection handlers, if you return a value or throw an exception, the new returned (chainable) Promise is resolved accordingly.
+- The fulfillment/rejection handler arguments to 'then(..)' can use default handlers that pass whatever values they receive to the next Promise by
+  returning/throwing respectively.
+- 'catch(function(err){ .. })' is a shortcut in the API for 'then(null,function(err){ .. })'.
+- Some developers have claimed that a "best practice" for Promise chains is to always end your chain with a final 'catch(..)' to avoid losing an error
+  to a forgotten/discarded Promise.
+
+
+
+
+
+
+
