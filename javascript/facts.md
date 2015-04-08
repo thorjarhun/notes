@@ -1,4 +1,4 @@
-## Comma Operator
+### Comma Operator
 - lowest operator precedence
 - evaluates both of its operands (from left to right) and returns the value of the second operand
 - Ex. (1, 2, 3, 4) === 4
@@ -7,13 +7,13 @@
 - rarely essential but often useful and just occasionally downright elegant
 - Good Quote: Semicolons partition statements. Comma operators partition expressions within statements.
 
-## [Labeled Statements](https://github.com/getify/You-Dont-Know-JS/blob/master/types%20&%20grammar/ch5.md#contextual-rules)
+### [Labeled Statements](https://github.com/getify/You-Dont-Know-JS/blob/master/types%20&%20grammar/ch5.md#contextual-rules)
 
-## Getters & Setters
+### Getters & Setters
 
-## Variable Hoisting
+### Variable Hoisting
 
-## Constructs That Form Scopes
+### Constructs That Form Scopes
   - functions
   - Block Scopes
   - with
@@ -23,16 +23,16 @@
   - eval (verify)
   - new Function (verify)
 
-## Performance Busters
+### Performance Busters
   - eval & with
   - they prevent the engine from performing compile-time optimizations regarding scope look-up, because the engine has to assume pessimistically that such optimizations may be invalid during runtime
 
 - Operator precedence
   - '&&' > '||' > '? :'
 
-## Object Names (as seen when using dev tools)
+### Object Names (as seen when using dev tools)
 
-## Functions With Custom 'toString'/'valueOf'
+### Functions With Custom 'toString'/'valueOf'
 
 
 
