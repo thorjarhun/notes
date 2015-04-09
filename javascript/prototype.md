@@ -1,4 +1,4 @@
-```javascript
+```js
 var myObj = function() {};
 var myObjInstance = new myObj();
 
@@ -16,24 +16,26 @@ console.assert(myObjInstance.__proto__ === Object.getPrototypeOf(myObjInstance))
 ##### *\__proto\__*
 - When an object 'cat' inherits from another object 'animal', that means there is a special property cat.*\__proto\__* = animal.
 - When a 'cat' property is accessed, and the interpreter can't find it in 'cat', it follows the *\__proto\__* link and searches in 'animal'.
-- For methods along the *\__proto\__* chain, *this* still refers to the object on which the method was invoked. In other words, the value of 'this' for function properties is set to the object, not its prototype.
+- For methods along the *\__proto\__* chain, ___this___ still refers to the object on which the method was invoked. In other words, the value of 'this' for function properties is set to the object, not its prototype.
 - The object referenced by *\__proto\__* is its prototype.
 - *\__proto\__* is referred to as [[Prototype]] in the specification.
 
-##### __constructor__ Property
+##### _constructor_ Property
 - An object has a built-in property named 'constructor', meant to reference the function which made the object.
 - When you declare a function, the interpreter creates the new function object with a 'prototype' property. By default, the 'prototype' property has a 'constructor' property set to the function itself.
 
-##### '__new__'
-- A '__new__' function call returns an object with the *\__proto\__* set to the function's 'prototype'.
-- When '__new__' is called on a function, Javascript injects an implicit reference to the new object being created in the form of the '__this__' keyword and returns it, if the function doesn't explicitly return.
-- When we do this: ```js
+##### _new_
+- A ___new___ function call returns an object with the *\__proto\__* set to the function's 'prototype'.
+- When ___new___ is called on a function, Javascript injects an implicit reference to the new object being created in the form of the ___this___ keyword and returns it, if the function doesn't explicitly return.
+- When we do this:
+```js
 function Cat(name) {
   this.name = name;
 }
 var kitty = new Cat("Fluffy");
 ```
-The engine is internally doing something like: ```js
+The engine is internally doing something like:
+```js
 function Cat(name) {
   var oThis = {};
   oThis.__proto__ = Cat.prototype;
@@ -44,8 +46,49 @@ function Cat(name) {
 }
 var kitty = Cat("Fluffy");
 ```
+##### Internals Of The *new* Keyword
+```javascript
+// Pseudo-code for the 'new' operator
+function NEW(f) {
+  // Check if 'f.prototype' is an object, not a primitive (this should only happen if f.prototype was overwritten)
+  var proto = Object(f.prototype) === f.prototype ? f.prototype : Object.prototype;
+
+  // Create an object that inherits from 'proto'
+  var obj = Object.create(proto);
+
+  // Apply the function setting 'obj' as the 'this' value
+  var ret = f.apply(obj, Array.prototype.slice.call(arguments, 1));
+
+  // If the constructor returned an object, return it instead. Otherwise, return the constructed object.
+  return (Object(ret) === ret) && ret || obj;
+}
+function NEW2(f) {
+  var obj = Object.create(f.prototype);
+  f.apply(obj, Array.prototype.slice.call(arguments, 1));
+  return obj;
+}
+function NEW3(f) {
+  var obj = {};
+  obj.__proto__ = f.prototype;
+  f.apply(obj, Array.prototype.slice.call(arguments, 1));
+  return obj;
+}
+// Example usage:
+function Foo (arg) {
+  this.prop = arg;
+}
+Foo.prototype.inherited_prop = 'baz';
+
+var a = NEW(Foo, 'bar');
+var b = NEW2(Foo, 'bar');
+var c = NEW3(Foo, 'bar');
+console.dir(a);
+console.dir(b);
+console.dir(c);
+```
 
 ##### Object.create
+- Object.create(proto) returns an object: `{ __proto__: proto }`, for some *proto*.
 ```js
 var a = {a: 1};
 var b = Object.create(a);
@@ -58,6 +101,32 @@ for (var x in d) {
   console.log(x + ": " + d[x]);
 }
 ```
+##### [Prototypal Inheritance](http://javascriptissexy.com/oop-in-javascript-what-you-need-to-know/)
+I don't think I like this inheritance strategy and I'm not sure if subclasses will have the proper *\__proto\__* chain.
+```js
+Object.create = function create(proto) {
+  //It creates a temporary constructor F()
+  function F() {}
+  //And set the prototype of the this constructor to the parametric (passed-in) proto object
+  //so that the F() constructor now inherits all the properties and methods of proto
+  F.prototype = proto;
+  //Then it returns a new, empty object (an instance of F())
+  //Note that this instance of F inherits from the passed-in (parametric object) proto object.
+  //Or you can say it copied all of the proto object's properties and methods
+  return new F();
+};
+function inheritPrototype(childObject, parentObject) {
+  // As discussed above, we use the Crockford’s method to copy the properties and methods from the parentObject onto the childObject
+  // So the copyOfParent object now has everything the parentObject has
+  var copyOfParent = Object.create(parentObject.prototype);
+
+  // Then we set the constructor of this new object to point to the childObject, since it was overwritten by Object.create()
+  copyOfParent.constructor = childObject;
+
+  // Then we set the childObject prototype to copyOfParent, so that the childObject can in turn inherit everything from copyOfParent (from parentObject)
+  childObject.prototype = copyOfParent;
+}
+```
 
 ##### for..in loop
 - iterates through all properties of an object and its *\__proto\__* chain
@@ -67,7 +136,7 @@ for (var x in d) {
 - To resolve if obj instanceof F, check if any object on the *\__proto\__* chain from obj is equal to F.prototype.
 
 ##### Pseudo-Classical Inheritance
-```javascript
+```js
 // http://javascript.info/tutorial/pseudo-classical-pattern disagrees with the well-known way of inheriting like: Cat.prototype = new Animal()
 //  but I disagree with its strategy. This example uses my own flavor.
 function Animal(name) {
@@ -98,7 +167,7 @@ cat.jump();
 ```
 
 ##### Modifications To A Constructor's Prototype Are Reflected Even After Instantiation
-```javascript
+```js
 function Cat(name) {
   this.name = name;
 }
@@ -109,77 +178,6 @@ var john = new Cat('John');
 console.log(john.eats);       // undefined
 Cat.prototype.eats = true;
 console.log(john.eats);       // true
-```
-
-##### [Prototypal Inheritance](http://javascriptissexy.com/oop-in-javascript-what-you-need-to-know/)
-I don't think I like this inheritance strategy and I'm not sure if subclasses will have the proper *\__proto\__* chain.
-```javascript
-// Object.create returns an object: `{ __proto__: proto }`, for some *proto*.
-Object.create = function create(proto) {
-  //It creates a temporary constructor F()
-  function F() {}
-  //And set the prototype of the this constructor to the parametric (passed-in) proto object
-  //so that the F() constructor now inherits all the properties and methods of proto
-  F.prototype = proto;
-  //Then it returns a new, empty object (an instance of F())
-  //Note that this instance of F inherits from the passed-in (parametric object) proto object.
-  //Or you can say it copied all of the proto object's properties and methods
-  return new F();
-};
-function inheritPrototype(childObject, parentObject) {
-  // As discussed above, we use the Crockford’s method to copy the properties and methods from the parentObject onto the childObject
-  // So the copyOfParent object now has everything the parentObject has
-  var copyOfParent = Object.create(parentObject.prototype);
-
-  // Then we set the constructor of this new object to point to the childObject, since it was overwritten by Object.create()
-  copyOfParent.constructor = childObject;
-
-  // Then we set the childObject prototype to copyOfParent, so that the childObject can in turn inherit everything from copyOfParent (from parentObject)
-  childObject.prototype = copyOfParent;
-}
-```
-
-##### Internals Of The *new* Keyword
-```javascript
-// Pseudo-code for the 'new' operator
-function NEW(f) {
-  var obj, ret, proto;
-
-  // Check if 'f.prototype' is an object, not a primitive (this should only happen if f.prototype was overwritten)
-  proto = Object(f.prototype) === f.prototype ? f.prototype : Object.prototype;
-
-  // Create an object that inherits from 'proto'
-  obj = Object.create(proto);
-
-  // Apply the function setting 'obj' as the 'this' value
-  ret = f.apply(obj, Array.prototype.slice.call(arguments, 1));
-
-  // If the constructor returned an object, return it instead. Otherwise, return the constructed object.
-  return (Object(ret) === ret) && ret || obj;
-}
-function NEW2(f) {
-  var obj = Object.create(f.prototype);
-  f.apply(obj, Array.prototype.slice.call(arguments, 1));
-  return obj;
-}
-function NEW3(f) {
-  var obj = {};
-  obj.__proto__ = f.prototype;
-  f.apply(obj, Array.prototype.slice.call(arguments, 1));
-  return obj;
-}
-// Example usage:
-function Foo (arg) {
-  this.prop = arg;
-}
-Foo.prototype.inherited_prop = 'baz';
-
-var a = NEW(Foo, 'bar');
-var b = NEW2(Foo, 'bar');
-var c = NEW3(Foo, 'bar');
-console.dir(a);
-console.dir(b);
-console.dir(c);
 ```
 
 ```js
