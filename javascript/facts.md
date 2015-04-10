@@ -147,7 +147,3 @@ var func = function(x, y) {
 var spread_func = spread(func);
 spread_func([20, 30]);  // 20, 30
 ```
-
-
-// Questions
-- Does the \__proto\__ chain of an object instance match the constructors .prototype chain or the constructors .prototype.\__proto\__ chain?
