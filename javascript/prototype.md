@@ -46,6 +46,15 @@ function Cat(name) {
 }
 var kitty = Cat("Fluffy");
 ```
+
+```js
+var o = new Foo();
+
+var o = {};
+o.__proto__ = Foo.prototype;
+Foo.call(o);
+```
+
 ##### Internals Of The *new* Keyword
 ```javascript
 // Pseudo-code for the 'new' operator
@@ -199,17 +208,6 @@ var C = function C() {
 };
 ```
 
-
-```js
-var o = new Foo();
-
-var o = {};
-o.__proto__ = Foo.prototype;
-Foo.call(o);
-```
-
-
-
 ```js
 function A(a){
   this.varA1 = a;
@@ -254,6 +252,19 @@ C.prototype.doSomething = function doSomething() { // override
   // ...
 };
 var c = new C(1, 2);
+
+var D = function D(a, d) {
+  A.call(this, a);
+  this.varD1 = d;
+};
+D.prototype = Object.create(A.prototype);
+D.prototype.constructor = D;
+D.prototype.varD2 = true;
+D.prototype.doSomething = function doSomething() { // override
+  A.prototype.doSomething.apply(this, arguments); // call super
+  // ...
+};
+var d = new D(1, 2);
 ```
 
 ```js
