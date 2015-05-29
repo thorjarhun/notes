@@ -154,6 +154,7 @@
   - Break problem down into different functions
   - Each function accomplishes a different unit of work
   - Functions call each other
+  - Treats code as data
 
 - Object Oriented Programming
   - Objects mirror entities in project space

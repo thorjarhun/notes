@@ -1,0 +1,245 @@
+- Functional Programming treats code as data.
+- Monad - a wrapper around a value that obeys certain laws
+- The 'lift' function lifts a type to the required type
+- The original value given to a monad is known as the monadic value
+- A monadic function takes a value and lifts it to a monadic value (mf: v -> mv)
+
+
+1. Functions
+  - 'a' means any type
+  x : a
+  f : a -> a
+  g : a -> a
+2. Monoids - you have a way of taking two things of the same type and creating another thing of the same type
+  - a collection of things and a rule for combining the things
+    - associative
+    - identity function
+  (f ° g) a = f(g a)
+  (f ° g) = h : a -> a
+3. Functions
+
+4. Monads - 
+  x : a
+  f : a -> M a
+  g : a -> M a
+  h : a -> M a
+
+
+
+Axioms:
+  unit(value).bind(f) ==== f(value)
+  monad.bind(unit) ==== monad
+  monad.bind(f).bind(g) ==== monad.bind(function(value) { return f(value).bind(g); }) ==== bind(bind(monad, f), g)
+
+// Macroid
+function MONAD() {
+  return function unit(value) {
+    var monad = Object.create(null);
+    monad.bind = function bind(func) {
+      return func(value);
+    };
+    return monad;
+  };
+}
+
+var identity = MONAD();
+var monad = identity("Hello world.");
+monad.bind(alert);
+// MONAD()("Hello world.").bind(alert);
+
+
+
+function MONAD() {
+  var proto = Object.create(null);
+  function unit(value) {
+    var monad = Object.create(proto);
+    monad.bind = function bind(func, args) {
+      return func.apply(undefined, [value].concat(Array.prototype.slice.apply(args || [])));
+    };
+    return monad;
+  }
+  /*
+  unit.method = function method(name, func) {
+    proto[name] = func;
+    return unit;
+  };
+  */
+  unit.lift = function lift(name, func) {
+    proto[name] = function () {
+      return unit(this.bind(func, Array.prototype.slice.apply(arguments)));
+    };
+    return unit;
+  };
+  return unit;
+}
+
+var ajax = MONAD().lift('alert', alert);
+var monad = ajax("Hello world.");
+monad.alert();
+
+
+
+function MONAD(modifier) {
+  var proto = Object.create(null);
+  function unit(value) {
+    var monad = Object.create(proto);
+    monad.bind = function bind(func, args) {
+      return func.apply(undefined, [value].concat(Array.prototype.slice.apply(args || [])));
+    };
+    if (typeof modifier === 'function') {
+      modifier(monad, value);
+    }
+    return monad;
+  }
+  /*
+  unit.lift = function lift(name, func) {
+    proto[name] = function () {
+      return unit(this.bind(func, Array.prototype.slice.apply(arguments)));
+    };
+    return unit;
+  };
+  */
+  return unit;
+}
+
+var maybe = MONAD(function (monad, value) {
+  if (value === null || value === undefined) {
+    monad.is_null = true;
+    monad.bind = function bind() {
+      return monad;
+    };
+  }
+});
+var monad = maybe(null);
+monad.bind(alert);
+
+
+
+
+
+/*********************************************************/
+var person = {
+    "name":"Homer Simpson", 
+    "address": {
+        "street":"123 Fake St.",
+        "city":"Springfield"
+    }
+};
+
+if (person != null && person["address"] != null) {
+    var state = person["address"]["state"];
+    if (state != null) {
+        console.log(state);
+    } else {
+        console.log("State unknown");
+    }
+}
+
+
+// Version 1
+
+// Monadic 'unit' function
+// Returns an object 'Nothing' if the value provided to it is null or undefined and returns a function 'Something' that returns the original value otherwise.
+var Maybe = function(value) {
+  var Nothing = {};
+  
+  var Something = function(value) { // equivalent to Haskell's 'Just'
+    return function() {
+      return value;
+    };
+  };
+  
+  if (typeof value === 'undefined' || value === null) {
+    return Nothing;
+  }
+  
+  return Something(value);
+};
+
+
+// Version 2
+
+// The bind method applies a function to the value contained by a 'Maybe' and returns a new 'Maybe' that contains the value of the function application.
+// - Anything bound to a 'Nothing' should simply return 'Nothing'.
+
+var Maybe = function(value) {
+  var Nothing = {
+    bind: function(fn) {
+      return this;
+    }
+  };
+  
+  var Something = function(value) {
+    return {
+      bind: function(fn) {
+        return Maybe(fn.call(this, value));
+      }
+    };
+  };
+  
+  if (typeof value === 'undefined' || value === null) {
+    return Nothing;
+  }
+  
+  return Something(value);
+};
+
+var a = Maybe(person);
+var b = a.bind(function(p) {
+  console.log(p);
+  return p["address"];
+});
+
+
+// Version 3
+
+// The 'maybe(def, fn)' function takes a default value 'def' and a function 'fn' and if the 'Maybe' is 'Nothing', returns the default value. Otherwise it applies the
+// function to the contents of the 'Maybe' and returns the result.
+
+var Maybe = function(value) {
+  var Nothing = {
+    bind: function(fn) {
+      return this;
+    },
+    isNothing: function() {
+      return true;
+    },
+    val: function() {
+      throw new Error('cannot call val() on Nothing');
+    },
+    maybe: function(def, fn) {
+      return def;
+    }
+  };
+  
+  var Something = function(value) {
+    return {
+      bind: function(fn) {
+        return Maybe(fn.call(this, value));
+      },
+      isNothing: function() {
+        return false;
+      },
+      val: function() {
+        return value;
+      },
+      maybe: function(def, fn) {
+        return fn.call(this, value);
+      }
+    };
+  };
+  
+  if (typeof value === 'undefined' || value === null) {
+    return Nothing;
+  }
+  
+  return Something(value);
+};
+
+console.log(Maybe(person).bind(function(p) { 
+  return p["address"];
+}).bind(function(a) {
+  return a["state"];
+}).maybe("State unknown", function(s) { 
+  return s; 
+}));
