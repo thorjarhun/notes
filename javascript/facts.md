@@ -42,7 +42,7 @@
 // Check if a number is prime
 function isPrime(n) {
   var d = Math.ceil(Math.sqrt(n));
-  while(n%(d--) && d);
+  while(n%(d--));
   return !d;
 };
 ```
