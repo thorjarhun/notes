@@ -14,7 +14,7 @@
 - React
 - Backbone
 - Chrome
-  - view-source:
+  - `view-source:`
 - JSX (need to look into this)
 
 ### Notes
