@@ -22,7 +22,6 @@
   - `createClass`
   - `render`
 - Backbone
-- 
 - ES6
   - `import`
   - `const`
