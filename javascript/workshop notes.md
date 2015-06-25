@@ -8,6 +8,7 @@
 ### Tools
 - Ampersand.js
   - ampersand-router
+  - ampersand-model
 - Babel.js
 - Node
   - npm init - creates a default package file
@@ -31,7 +32,10 @@
 - Chrome
   - `view-source:`
   - React Developer Tools
+  - log XMLHttpRequests
 - JSX (need to look into this)
 - yeti.css
 
 ### General Notes
+- Singleton - `export default {}`
+  - events
