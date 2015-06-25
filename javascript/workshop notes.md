@@ -1,2 +1,1 @@
-# Notes from Frontend Masters Workshop
-## Building Modern Single-Page Web Applications
+# Building Modern Single-Page Web Applications
