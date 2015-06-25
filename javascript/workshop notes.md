@@ -11,7 +11,7 @@
   - npm init - creates a default package file
 - Webpack
   - Module Bundler
-  - auto-update webpages with **import**/**require** resources
+  - auto-update webpages with **import/require** resources
 - React
   - Virtual DOM
     - abstracts away the DOM, giving a simpler programming model and better performance
