@@ -19,6 +19,8 @@
   - Virtual DOM
     - abstracts away the DOM, giving a simpler programming model and better performance
     - see React Developer Tools
+  - `createClass`
+  - `render`
 - Backbone
 - 
 - ES6
