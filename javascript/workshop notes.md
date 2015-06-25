@@ -11,8 +11,15 @@
   - npm init - creates a default package file
 - Webpack
   - Module Bundler
+  - `require`?
+  - auto-update webpages with `import`ed resources
 - React
+  - Virtual DOM
+    - abstracts away the DOM, giving a simpler programming model and better performance
 - Backbone
+- ES6
+  - `import`
+  - `const`
 - Chrome
   - `view-source:`
 - JSX (need to look into this)
