@@ -5,11 +5,16 @@
 - [Hubtags](https://github.com/henrikjoreteg/hubtags.com)
 
 ### Tools
-- Ampersand
+- Ampersand.js
 - Babel.js
 - Node
   - npm init - creates a default package file
 - Webpack
   - Module Bundler
+- React
+- Backbone
+- Chrome
+  - view-source:
+- JSX (need to look into this)
 
 ### Notes
