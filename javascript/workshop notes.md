@@ -23,6 +23,7 @@
   - `createClass`
   - `render`
 - Backbone
+  - Worthwhile learning
 - ES6
   - `import`
   - `const`
