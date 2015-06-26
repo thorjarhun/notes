@@ -23,6 +23,7 @@
     - see React Developer Tools
   - `createClass`
   - `render`
+  - states
 - Backbone
   - important to learn for understanding other frameworks.
 - ES6
