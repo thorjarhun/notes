@@ -37,6 +37,7 @@
   - `view-source:`
   - React Developer Tools
   - log XMLHttpRequests
+  - offline mode
 - JSX (need to look into this)
 - yeti.css
 
