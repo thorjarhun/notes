@@ -23,7 +23,7 @@
   - `createClass`
   - `render`
 - Backbone
-  - Worthwhile learning
+  - important to learn for understanding other frameworks.
 - ES6
   - `import`
   - `const`
