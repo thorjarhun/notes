@@ -31,6 +31,7 @@
   - `export`?
   - classes
   - default arguments
+  - destructuring syntax
 - Chrome
   - `view-source:`
   - React Developer Tools
