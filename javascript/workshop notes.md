@@ -12,6 +12,7 @@
 - Babel.js
 - Node
   - npm init - creates a default package file
+  - `debugger` statement
 - Webpack
   - Module Bundler
   - auto-update webpages with **import/require** resources
