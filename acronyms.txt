@@ -1,0 +1,33 @@
+WSDL - Web Services Description Language
+
+SOAP - Simple Object Access Protocol
+
+UDDI - Universal Description, Discovery and Integration
+
+RDF - Resource Description Framework
+
+JAX-WS - Java API for XML Web Services
+
+DTD - Document Type Definition
+
+XSD - XML Schema Definition
+
+URI - Uniform Resource Identifier
+
+JPA - Java Persistence API
+
+JAXB - Java Architecture for XML Binding
+
+JSTL - JavaServer Pages Standard Tag Library
+
+SVG - Scalable Vector Graphics
+
+JMS - Java Message Service
+
+EJB - Enterprise JavaBeans
+
+MDB - Message Driven Bean
+
+CDI - Contexts and Dependency Injection
+
+JSP - JavaServer Pages
