@@ -18,7 +18,7 @@ var delay = function(t) {
     setTimeout(resolve, t);
   });
 };
-Promise.resolve(delay(1000))
+delay(1000)
 .then(function() {
   console.log("one");
   return delay(1000);
