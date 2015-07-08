@@ -146,4 +146,5 @@ var func = function(x, y) {
 };
 var spread_func = spread(func);
 spread_func([20, 30]);  // 20, 30
+// This is the same as calling: func.apply(null, [20, 30])
 ```
