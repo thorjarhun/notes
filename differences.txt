@@ -1,0 +1,35 @@
+This is a list of terms often (incorrectly) used interchangably leading to blurred meanings. There is a remarkably weak concensus on some of the answers so there isn't always a clear right/wrong definition. Probably a good idea to just avoid the words 'web', 'application', 'context', and 'container' or just mix them all if I want to be vague.
+
+- 'service layer' vs 'web service layer'
+- 'servlet container' vs 'web container'
+- 'application server' vs 'web server'
+- 'spring container' vs 'servlet container' (in Spring Web Apps)
+- 'application context' vs 'web application context' (in Spring Web Apps)
+- 'servlet context' vs 'root context'
+- 'argument' vs 'parameter' vs 'attribute' vs 'field' vs 'property'
+
+term: servlet container
+synonyms: web container, servlet engine
+definition: A servlet container is an implementation of various java EE specifications like Java Servlet. Put another way, it is an environment where a Java web application can live. A 'spring container' can 'live' inside. It maintains the life cycle for servlets.
+
+term: web server
+synoynms: http server
+definition: A server which is capable of serving HTTP content. It contains a web container.
+
+term: application server
+definition: A server which hosts and exposes business logic and processes. In many scenarios, a web server is being used to create the front-end of the application server, that is, it exposes a set of web pages that allow the user to interact with the business rules found in the application server.
+
+From http://howtodoinjava.com/2013/10/03/a-birds-eye-view-on-how-web-servers-work/,
+When someone says “web server” you often think HTTP-centric, web UI oriented applications. When someone says “Application server” you may think “heavier loads, enterprise features, transactions and queuing, multi-channel communication (HTTP + more)”. But mostly it is the same product that serves both sets of requirements now-a-days.
+
+term: root context
+synonym: root application context, servlet context
+definition: The highest context level. May be used by multiple servlet configs. May be created by Spring's ContextLoaderListener in web.xml. ServletContext defines a set of methods that a servlet uses to communicate with its servlet container. When the servlet container starts up, it will deploy and load all web-applications. When a web application gets loaded, the servlet container will create the ServletContext once per application. This includes servlets, filters, and listeners defined in web.xml.
+
+term: application context (need to look into this more because the definitions are totally inconsistent)
+definition 1 (as a type): Something designed to work with the standard javax.servlet.ServletContext. There is a 1 to * relationship from servlet context to application context(s)? Typically all application contexts defined in web.xml in a servlet Spring application are web application contexts.
+definition 2 (as an instance): The root context.
+
+term: web application context
+definition 1: Extends the application context so that it's able to communicate with the container.
+definition 2: The servlet context?

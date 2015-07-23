@@ -1,3 +1,22 @@
+> TODO: organize by context
+
+ACID - atomic, consistent, isolated, and durable
+
+SOLID - SRP, OCP, LSP, ISP, DIP
+- SRP - single responsibility principle
+- OCP - open/closed principle
+- LSP - Liskov substitution principle
+- ISP - interface segregation principle
+- DIP - dependency inversion principle
+
+SOP - Same Origin Policy
+
+CORS - Cross-Origin Resource Sharing
+
+AST - Abstract Syntax Tree
+
+CGI - Common Gateway Interface
+
 WSDL - Web Services Description Language
 
 SOAP - Simple Object Access Protocol

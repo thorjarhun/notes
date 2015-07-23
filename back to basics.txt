@@ -1,0 +1,44 @@
+It can sometimes be difficult to answer very basic yet fundamental questions about web programming in a way that can be understood by audiences with different technical backgrounds or whom live/work in different circles. It can be extremely frustrating when this diminishes the ability to effectively communicate. These questions also double nicely as interview questions but that leads to a conundrum when a person knows something, often taken for granted, but doesn't know how to explain it. As I find myself feeling a bit of that today, I intend to centralize some of my thoughts on some fundamental concepts here.
+
+####CSS Cascading Order Confusion
+Does the way a style is included (external, internal, or inline) matter directly or as a consequence of the order in which rules are arranged when the page is rendered? __The latter.__
+Can an external style included after an internal style override it? __Yes.__
+
+####CSS Rule Summary
+1. Important/Origin
+2. Specificity
+3. Order (last wins)
+
+####CSS Importance/Origin
+1. Browser (user agent)
+2. User (normal)
+3. Author
+ - External
+ - Internal/embedded
+ - Inline
+4. User (important)
+
+####CSS Specificity (used as a tie-breaker)
+1. ID
+2. Class, psuedo-class, attribute
+3. Elements
+
+####Closure
+What are closures?
+- A function to which the variables of the surrounding context are bound by reference.
+- A technique for implementing lexically scoped name bindings in languages with first-class functions.
+- An expression (typically a function) that can have free variables together with an environment that binds those variables.
+- A data structure storing a function together with an environment.
+
+####CORS
+Q: What is CORS?
+A: CORS stands for Cross-Origin Resource Sharing. It is used to provide a way for web servers to support cross-site access controls, which enable secure cross-site data transfers.
+Q: How does CORS work?
+A: The answer may be surprising because it turns out that CORS is server controlled by browser enforced. When a server receives a cross-origin request from a browser, it actually responds just as if the request was from the same-origin. What's important is that for any request, the server includes a header _Access-Control-Allow-Origin_ in the response which specifies a whitelist of requesting origins. When the browser receives the response, it reads the _Access-Control-Allow-Origin_ header and determines if the request was made from a whitelisted origin. If not, the browser will deny the response.
+
+####Script Tags Placement
+Arguments for top:
+ - parsed sooner so downloading and other processing can begin
+ - an event could be called as the page is loading so event handlers should start listening before that happens
+Arguments for bottom:
+ - Page rendering goes depth first through the DOM AST and traversal between two nodes can only occur after the first node is finished being processed. This means that a script tag at the top can block anything (below it) from being rendered until the script is executed. This is due to DOM APIs that allow strings to be appended onto the content that the parser is consuming.

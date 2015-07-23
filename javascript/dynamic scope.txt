@@ -1,0 +1,49 @@
+http://stackoverflow.com/questions/10060857/is-it-possible-to-achieve-dynamic-scoping-in-javascript-without-resorting-to-eva
+
+
+// Define a new class
+function dyn() {}
+// with a method which returns a copy-on-write clone of the object.
+dyn.prototype.cow = function() {
+  // An empty object is created with this object as its prototype.  Javascript
+  // will follow the prototype chain to read an attribute, but set new values
+  // on the new object.
+  return Object.create(this);
+}
+
+
+
+// Given an environment, read x then write to it.
+function g(env) {
+  console.log(env.x);
+  env.x = 2;
+}
+// Given an environment, write x then call f with a clone.
+function f(env) {
+  env.x = 3;
+  g(env.cow());
+}
+
+
+
+// Create a new environment.
+var env = new dyn();
+// env -> {__proto__: dyn.prototype}
+// Set a value in it.
+env.x = 1;
+// env -> {x: 1}  // Still has dyn.prototype, but it's long so I'll leave it out.
+
+f(env.cow());
+// f():
+//   env -> {__proto__: {x: 1}}  // Called with env = caller's env.cow()
+//   > env.x = 3
+//   env -> {x: 3, __proto__: {x: 1}}  // New value is set in current object
+//   g():
+//     env -> {__proto__: {x: 3, __proto__: {x: 1}}}  // caller's env.cow()
+//     env.x -> 3  // attribute lookup follows chain of prototypes
+//     > env.x = 2
+//     env -> {x: 2, __proto__: {x: 3, __proto__: {x: 1}}}
+
+console.log(env.x);
+// env -> {x: 1}  // still unchanged!
+// env.x -> 1
