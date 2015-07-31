@@ -17,6 +17,8 @@ AST - Abstract Syntax Tree
 
 CGI - Common Gateway Interface
 
+PAAS - Platform as a Service
+
 WSDL - Web Services Description Language
 
 SOAP - Simple Object Access Protocol
