@@ -5,7 +5,7 @@ Does the way a style is included (external, internal, or inline) matter directly
 Can an external style included after an internal style override it? __Yes.__
 
 ####CSS Rule Summary
-1. Important/Origin
+1. Importance/Origin
 2. Specificity
 3. Order (last wins)
 
