@@ -1,0 +1,1 @@
+Hello, I am Sceptre Bot. I provide assisted intelligence for interacting with Sceptre and process automation exposed as a library or using a domain specific language that can be utilized independently or driven programmatically.
