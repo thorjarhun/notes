@@ -1,6 +1,7 @@
 ##### Thunkify
 ```js
-// Returns a function that produces thunks (a thunk factory, if you will) over a given function 'fn'.
+// Version 1
+// Returns a function that produces thunks (a thunk factory or 'thunkory', if you will) over a given function 'fn'.
 function thunkify(fn) {
     return function() {
         var args = [].slice.call( arguments );
@@ -18,6 +19,7 @@ function foo(x, y, cb) {
         console.log('foo finished');
         cb( null, x + y );
     }, 1000 );
+    return "returned value";
 }
 
 var fooThunkory = thunkify( foo );
@@ -57,6 +59,7 @@ function promisify(fn) {
     };
 };
 
+// Version 2
 function thunkify(fn) {
     var result = {};
     var fakeCallback = function() {
@@ -72,6 +75,43 @@ function thunkify(fn) {
                 cb.apply( null, result.callbackArgs );
             }, 0 );
             return result.value;
+        };
+    };
+}
+
+// Version 3
+function thunkify(fn) {
+    var callbackArgs = 0;
+    var fakeCallback = function() {
+        callbackArgs = [].slice.call( arguments );
+    };
+    return function() {
+        var result, args = [].slice.call( arguments );
+        if ( typeof callbackArgs === "number" ) {
+            result = fn.apply( null, args.concat( fakeCallback ) );
+        }
+        return function(cb) {
+            setTimeout( function() {
+                cb.apply( null, callbackArgs );
+            }, 0 );
+            return result;
+        };
+    };
+}
+
+// Version 4
+function thunkify(fn) {
+    return function() {
+        var callbackArgs, args = [].slice.call( arguments );
+        var fakeCallback = function() {
+            callbackArgs = [].slice.call( arguments );
+        };
+        var result = fn.apply( null, args.concat( fakeCallback ) );
+        return function(cb) {
+            setTimeout( function() {
+                cb.apply( null, callbackArgs );
+            }, 0 );
+            return result;
         };
     };
 }
