@@ -1,1 +1,3 @@
-we are in a position to form the next major inflection point of the web
+- We are in a position to form the next major inflection point of the web.
+
+- Puzzles are a fun way to learn new mental models, and deepen your understanding for the ones you're familiar with. While I might "know" concepts, it's not until I recognize them in the wild that I actually feel comfortable. Ideas do no good sitting inside your head like artifacts in a museum -- they need to be taken out and played with.

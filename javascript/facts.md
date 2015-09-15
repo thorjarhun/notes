@@ -124,7 +124,7 @@ function asyncify(fn) {
     };
 }
 
-function result(data) {
+function result() {
     console.log( "a: " + a );
 }
 
