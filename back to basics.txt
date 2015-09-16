@@ -34,7 +34,7 @@ What are closures?
 Q: What is CORS?
 A: CORS stands for Cross-Origin Resource Sharing. It is used to provide a way for web servers to support cross-site access controls, which enable secure cross-site data transfers.
 Q: How does CORS work?
-A: The answer may be surprising because it turns out that CORS is server controlled by browser enforced. When a server receives a cross-origin request from a browser, it actually responds just as if the request was from the same-origin. What's important is that for any request, the server includes a header _Access-Control-Allow-Origin_ in the response which specifies a whitelist of requesting origins. When the browser receives the response, it reads the _Access-Control-Allow-Origin_ header and determines if the request was made from a whitelisted origin. If not, the browser will deny the response.
+A: The answer may be surprising because it turns out that CORS is server controlled but browser enforced. When a server receives a cross-origin request from a browser, it actually responds just as if the request was from the same-origin. What's important is that for any request, the server includes a header _Access-Control-Allow-Origin_ in the response which specifies a whitelist of requesting origins. When the browser receives the response, it reads the _Access-Control-Allow-Origin_ header and determines if the request was made from a whitelisted origin. If not, the browser will deny the response.
 
 ####Script Tags Placement
 Arguments for top:
