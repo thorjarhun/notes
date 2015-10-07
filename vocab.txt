@@ -6,3 +6,4 @@ ruminate - think deeply about something
 succinct - briefly and clearly expressed
 inculcate - to cause (something) to be learned by (someone) by repeating it again and again
 impetus - the force or energy with which a body moves
+holistic - characterized by comprehension of the parts of something as intimately interconnected and explicable only by reference to the whole
