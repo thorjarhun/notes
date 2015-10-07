@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <script src="d3.v3.min.js" charset="utf-8"></script>
+     <style>
+      .node {
+        cursor: pointer;
+      }
+     
+      .node circle {
+        fill: #fff;
+        stroke: steelblue;
+        stroke-width: 1.5px;
+      }
+
+      .node text{
+        font: 10px sans-serif;
+      }
+
+      .link {
+        fill: none;
+        stroke: #ccc;
+        stroke-width: 1.5px;
+      }
+    </style>
+  </head>
+  <body>
+  </body>
+</html>
+
+
+<script>
+//var master_data = {};
+
+var getData = function getData(d) {
+  var stockNumber = d.stock;
+  var serialNumber = d.serial;
+  if (!stockNumber || !serialNumber) {
+    stockNumber = '56-7200-9-0160';//'56-7110-9-0010';
+    serialNumber = '16307';
+  }
+  var http = new XMLHttpRequest();
+  http.open("GET", "http://localhost:9080/PCW/rest/api/IAS?stockNumber=" + stockNumber + "&serialNumber=" + serialNumber, true);
+  http.onreadystatechange = function() {
+    if (http.readyState == 4) {
+      var response = JSON.parse(http.responseText);
+      console.log(response);
+      window.debug_1 = response;
+      
+      var data = {
+        stock: response.currentStkNum,
+        serial: response.currentSerNum,
+        children: [
+          {
+            stock: response.nwaStock,
+            serial: response.serial
+          }
+        ]
+      };
+
+      data.children[0].children = response.partSubAssmbQueues.map(function(item) {
+        return {
+          stock: item.stock,
+          serial: item.serial,
+          hasSubAssembly: item.hasSubAssembly
+        };
+      });
+      
+      console.log(data);
+      window.debug_2 = data;
+      
+      
+      data.x0 = root.children[0].x0;
+      data.y0 = root.children[0].y0;
+      root = data;
+      
+      update(data);
+    }
+  }
+  
+  http.setRequestHeader("Content-Type", "application/json");
+  //http.send({stockNumber: stockNumber, serialNumber: serialNumber});
+  http.send();
+}
+
+var dataset = {
+  stock:"56-2000-9-0001",
+  serial:"00696",
+  children:[
+    {
+      stock:"56-7110-9-0010",
+      serial:"16307",
+      children: [
+        {"stock":"56-0511-8-0003","serial":"16307","hasSubAssembly":false},
+        {"stock":"56-0511-8-0008","serial":"16307","hasSubAssembly":false},
+        {"stock":"56-0511-8-0009","serial":"16307","hasSubAssembly":false},
+        {"stock":"56-0511-8-0017","serial":"16307","hasSubAssembly":false},
+        {"stock":"55-0511-8-0053","serial":"16307","hasSubAssembly":false},
+        {"stock":"55-0526-8-0057","serial":"16307","hasSubAssembly":false},
+        {"stock":"55-0570-8-9930","serial":"16307","hasSubAssembly":false},
+        {"stock":"55-0571-8-0000","serial":"96307","hasSubAssembly":false},
+        {"stock":"55-0571-8-0010","serial":"96307","hasSubAssembly":false},
+        {"stock":"55-0571-8-0100","serial":"96307","hasSubAssembly":false},
+        {"stock":"55-0572-8-0004","serial":"96307","hasSubAssembly":false},
+        {"stock":"55-0572-8-0049","serial":"16307","hasSubAssembly":false},
+        {"stock":"56-7200-9-0160","serial":"16307","hasSubAssembly":true}
+      ]
+    }
+  ]
+};
+
+/*
+var diagonal = function diagonal(d) {
+    return "M" + yScale(d.source.y) + "," + d.source.x
+         + "V" + d.target.x + "H" + yScale(d.target.y);
+};
+var transform = function transform(d) {
+    return "translate(" + yScale(d.y) + "," + d.x + ")";
+};
+var zoom = function zoom() {
+    svg.selectAll(".node")
+       .attr("transform", transform);
+
+    svg.selectAll(".link")
+       .attr("d", diagonal);
+};
+var yScale = d3.scale.linear()
+               .domain([0, height])
+               .range([0, height]);
+*/
+
+var duration = 3000;
+var margin = {top: 0, right: 200, bottom: 0, left: 90};
+var width = 1190 - margin.right - margin.left;
+var height = 500 - margin.top - margin.bottom;
+
+var cluster = d3.layout.tree()
+                .size([height, width]);
+
+var diagonal = d3.svg.diagonal()
+                 .projection(function(d) { return [d.y, d.x]; });
+//                 .projection(function(d) { return [yScale(d.y), d.x]; });
+
+var keyFunc = function keyFunc(d) {
+  return d.stock + "/" + d.serial;
+};
+
+// Toggle children on click.
+var onclick = function onclick(d) {
+/*
+  if (d.children) {
+    d._children = d.children;
+    d.children = null;
+  } else {
+    d.children = d._children;
+    d._children = null;
+  }
+  update(d);
+*/
+/*
+  if (d.children) {
+    d.children.forEach(function(c) { c.hidden = !c.hidden; });
+  }
+  update(d);
+*/
+  getData(d);
+};
+
+//Create SVG element
+var svg = d3.select("body")
+              .append("svg")
+                .attr("width", width + margin.right + margin.left)
+                .attr("height", height + margin.top + margin.bottom)
+                .append("g")
+                  .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+//                  .call(d3.behavior.zoom().x(yScale).scaleExtent([1, 8]).on("zoom", zoom));
+/*
+svg.append("rect")
+    .attr("width", width)
+    .attr("height", height)
+    .style({
+      fill: "none",
+      "pointer-events": "all"
+    });
+*/
+d3.select(self.frameElement).style("height", height + margin.top + margin.bottom + "px");
+
+var root = dataset;
+root.x0 = height / 2;
+root.y0 = 0;
+
+var update = function update(source) {
+  // Update scale domain
+//  xScale.domain(d3.range(dataset.length));
+  
+  // Compute the new tree layout
+  var nodes = cluster.nodes(root).reverse(),
+      links = cluster.links(nodes);
+  
+  // Normalize for fixed-depth
+  nodes.forEach(function(d) { d.y = d.depth * 180; });
+  
+  var node = svg.selectAll("g.node")
+                .data(nodes, keyFunc);
+
+  var nodeEnter = node.enter().append("g")
+                      .attr("class", "node")
+                      .attr("transform", function(d) {
+                        if (d.depth == 0) {
+                          return "translate(" + 0 + "," + height / 2 + ")";
+                        }
+                        return "translate(" + source.y0 + "," + source.x0 + ")";
+                      })
+                      .on("click", onclick)
+                      .style("opacity", 0);
+
+  nodeEnter.append("circle")
+           .attr("r", 1e-6)
+           .style("fill", function(d) { return d._children ? "lightsteelblue" : "#fff"; });
+  
+  nodeEnter.append("text")
+           .attr("x", function(d) { return d.children || d._children ? -10 : 10; })
+           .attr("dy", ".35em")
+           .attr("text-anchor", function(d) { return d.children || d._children ? "end" : "start"; })
+           .text(function(d) { return d.stock; })
+           .style("fill-opacity", 1e-6);
+  
+  // Transition nodes to their new position.
+  var nodeUpdate = node.transition()
+                       .delay(function(d) {
+                          // Delay new items
+                          if (d3.select(this).style('opacity') == 0) {
+                            return duration;
+                          }
+                          return 0;
+                       })
+                       .duration(duration)
+                       .attr("transform", function(d) { return d.hidden ? "translate(" + source.y + "," + source.x + ")" : "translate(" + d.y + "," + d.x + ")"; })
+                       .style("opacity", function(d) { return d.hidden ? 0 : 1; });
+
+  nodeUpdate.select("circle")
+            .attr("r", 4.5)
+            .style("fill", function(d) { return d._children ? "lightsteelblue" : "#fff"; });
+
+  nodeUpdate.select("text")
+            .style("fill-opacity", 1);
+
+  // Transition exiting nodes to the parent's new position.
+  var nodeExit = node.exit().transition()
+                     .duration(duration)
+                     .attr("transform", function(d) {
+                        var offset = 200;
+                        if (d.depth == 0) {
+                          offset *= -1;
+                        }
+                        return "translate(" + (d.y + offset) + "," + d.x + ")";
+                     })
+                     .remove();
+
+  // Update the links…
+  var link = svg.selectAll("path.link")
+                .data(links, function(d) { return keyFunc(d.source) + "-" + keyFunc(d.target);});
+
+  // Enter any new links at the parent's previous position.
+  link.enter().insert("path", "g")
+      .attr("class", "link")
+      .attr("d", function(d) {
+        var o = {x: source.x0, y: source.y0};
+        if (d.depth == 0) {
+          o = {x: height / 2, y: 0};
+        }
+        return diagonal({source: o, target: o});
+      })
+      .style("opacity", 0);
+
+  // Transition links to their new position.
+  link.transition()
+      .delay(function(d) {
+        // Delay new items
+        if (d3.select(this).style('opacity') == 0) {
+          return duration;
+        }
+        return 0;
+      })
+      .duration(duration)
+      .attr("d", diagonal)
+      .style("opacity", function(d) { return d.target.hidden ? 0 : 1; });
+
+  // Transition exiting nodes to the parent's new position.
+  link.exit().transition()
+      .duration(duration)
+      .attr("d", function(d) {
+        var o = {x: d.target.x, y: d.target.y};
+        var offset = 200;
+        if (d.source.depth == 0) {
+          //offset *= -1;
+          o = {x: d.source.x, y: d.source.y};
+        }
+        //o.y += offset;
+        return diagonal({source: o, target: o});
+      })
+      .remove();
+
+  // Stash the old positions for transition.
+  nodes.forEach(function(d) {
+    d.x0 = d.x;
+    d.y0 = d.y;
+  });
+};
+/*
+function collapse(d) {
+    if (d.children) {
+      d._children = d.children;
+      d._children.forEach(collapse);
+      d.children = null;
+    }
+  }
+
+  root.children.forEach(collapse);
+*/
+update(root);
+
+dataset = {
+    stock:"56-2000-9-0001",
+    serial:"00696",
+    children:[
+        {
+            stock:"56-7110-9-0010",
+            serial:"16307",
+            children: [
+                {"stock":"56-0511-8-0003","serial":"16307","hasSubAssembly":false},
+                {"stock":"56-0511-8-0008","serial":"16307","hasSubAssembly":false},
+                {"stock":"56-0511-8-0009","serial":"16307","hasSubAssembly":false},
+                {"stock":"56-0511-8-0017","serial":"16307","hasSubAssembly":false},
+                {"stock":"55-0511-8-0053","serial":"16307","hasSubAssembly":false},
+                {"stock":"55-0526-8-0057","serial":"16307","hasSubAssembly":false},
+                {"stock":"55-0570-8-9930","serial":"16307","hasSubAssembly":false},
+                {"stock":"55-0571-8-0000","serial":"96307","hasSubAssembly":false},
+                {"stock":"55-0571-8-0010","serial":"96307","hasSubAssembly":false},
+                {"stock":"55-0571-8-0100","serial":"96307","hasSubAssembly":false},
+                {"stock":"55-0572-8-0004","serial":"96307","hasSubAssembly":false},
+                {"stock":"55-0572-8-0049","serial":"16307","hasSubAssembly":false},
+                 {"stock":"55-0572-8-7260","serial":"16307","hasSubAssembly":false},
+                 {"stock":"56-0571-8-3301","serial":"66307","hasSubAssembly":false},
+                 {"stock":"56-0571-8-3301","serial":"56307","hasSubAssembly":false},
+                 {"stock":"56-0571-8-3301","serial":"46307","hasSubAssembly":false},
+                 {"stock":"56-0571-8-3301","serial":"36307","hasSubAssembly":false},
+                 {"stock":"56-0571-8-3301","serial":"26307","hasSubAssembly":false},
+                 {"stock":"56-0571-8-3302","serial":"36307","hasSubAssembly":false},
+                 {"stock":"56-0571-8-3302","serial":"26307","hasSubAssembly":false},
+                 {"stock":"56-0571-8-3303","serial":"76307","hasSubAssembly":false},
+                 {"stock":"56-0571-8-3303","serial":"66307","hasSubAssembly":false},
+                 {"stock":"56-0571-8-3303","serial":"56307","hasSubAssembly":false},
+                 {"stock":"56-0571-8-3303","serial":"46307","hasSubAssembly":false},
+                 {"stock":"56-0571-8-3303","serial":"36307","hasSubAssembly":false},
+                 {"stock":"55-0572-8-0114","serial":"16307","hasSubAssembly":false},
+                 {"stock":"55-0572-8-0248","serial":"16307","hasSubAssembly":false},
+                 {"stock":"55-0572-8-0602","serial":"16307","hasSubAssembly":false},
+                 {"stock":"55-0572-8-0605","serial":"16307","hasSubAssembly":false},
+                 {"stock":"56-0572-8-0122","serial":"16307","hasSubAssembly":false},
+                 {"stock":"56-0572-8-0128","serial":"16307","hasSubAssembly":false},
+                 {"stock":"55-0572-8-0134","serial":"16307","hasSubAssembly":false},
+                 {"stock":"55-0572-8-0051","serial":"16307","hasSubAssembly":false},
+                 {"stock":"55-0572-8-0154","serial":"16307","hasSubAssembly":false},
+                 {"stock":"55-0572-8-0265","serial":"16307","hasSubAssembly":false},
+                 {"stock":"55-0572-8-0097","serial":"16307","hasSubAssembly":false},
+                 {"stock":"55-0572-8-0007","serial":"16307","hasSubAssembly":false},
+                 {"stock":"55-0572-8-0060","serial":"16307","hasSubAssembly":false},
+                 {"stock":"55-0572-8-0132","serial":"16307","hasSubAssembly":false},
+                 {"stock":"56-0572-8-0063","serial":"16307","hasSubAssembly":false},
+                 {"stock":"55-0572-8-0053","serial":"16307","hasSubAssembly":false},
+                 {"stock":"55-0572-8-0009","serial":"16307","hasSubAssembly":false},
+                 {"stock":"55-0572-8-0067","serial":"16307","hasSubAssembly":false},
+                 {"stock":"55-0572-8-0435","serial":"16307","hasSubAssembly":false},
+                 {"stock":"55-0573-8-0037","serial":"16307","hasSubAssembly":false},
+                 {"stock":"55-0573-8-0061","serial":"16307","hasSubAssembly":false},
+                 {"stock":"56-0575-8-0003","serial":"16307","hasSubAssembly":false},
+                 {"stock":"56-0575-8-0005","serial":"16307","hasSubAssembly":false},
+                 {"stock":"56-0575-8-0011","serial":"16307","hasSubAssembly":false},
+                 {"stock":"56-0575-8-0017","serial":"16307","hasSubAssembly":false},
+                 {"stock":"55-0575-8-0020","serial":"16307","hasSubAssembly":false},
+                 {"stock":"56-0575-8-0033","serial":"16307","hasSubAssembly":false},
+                 {"stock":"55-0577-8-0003","serial":"16307","hasSubAssembly":false},
+                 {"stock":"55-0579-8-0002","serial":"16307","hasSubAssembly":false},
+                 {"stock":"55-0579-8-0007","serial":"16307","hasSubAssembly":false},
+                 {"stock":"56-0579-8-0007","serial":"16307","hasSubAssembly":false},
+                 {"stock":"55-0579-8-0009","serial":"16307","hasSubAssembly":false},
+                 {"stock":"55-0579-8-0011","serial":"16307","hasSubAssembly":false},
+                 {"stock":"55-0579-8-0013","serial":"16307","hasSubAssembly":false},
+                 {"stock":"55-0579-8-0075","serial":"16307","hasSubAssembly":false},
+                 {"stock":"55-0579-8-0032","serial":"16307","hasSubAssembly":false},
+                 {"stock":"55-0579-8-0037","serial":"96307","hasSubAssembly":false},
+                 {"stock":"55-0579-8-0035","serial":"16307","hasSubAssembly":false},
+                 {"stock":"55-0579-8-0039","serial":"16307","hasSubAssembly":false},
+                 {"stock":"55-0579-8-0043","serial":"16307","hasSubAssembly":false},
+                 {"stock":"55-0579-8-0089","serial":"16307","hasSubAssembly":false},
+                 {"stock":"55-0579-8-0093","serial":"16307","hasSubAssembly":false},
+                {"stock":"56-7200-9-0160","serial":"16307","hasSubAssembly":true}
+            ]
+        }
+    ]
+};
+
+</script>
