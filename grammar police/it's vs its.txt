@@ -1,0 +1,10 @@
+Term: It's
+Def: A contraction for it is or it has.
+Mnemonic: It's an apostrophe.
+
+Term: Its
+Def: The possessive form of the neuter pronoun "it".
+Mnemonic: The possessive dog had its tail removed.
+Rule of Thumb: If you can replace "it" with "his" or "her", there's no apostrophe.
+
+Phrase that demonstrates both rules: It's not its.
