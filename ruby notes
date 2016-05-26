@@ -1,0 +1,116 @@
+# Symbol:to_proc
+names = ["committee", "viking", "docker"]
+names.map &:upcase
+
+Equality:
+a = "abc"
+b = "abc"
+a == b # true
+a.equal?(b) # false
+
+Methods & Variables:
+# The first character of an identifier categorizes it at a glance:
+$ # global variable
+@ # instance variable
+@@ # class variable
+[a-z] or _ # local variable
+[A-Z] # constant
+
+
+class Variable
+  @@var = 'class variable'
+  @var = 'class-instance variable'
+  var = 'local variable' # don't know how to access this
+  def initialize
+    puts 'START initialize'
+    @var = 'instance variable'
+    #self.var = 'instance variable 2' # tries to call 'var=' on the instance
+    var = 'local variable 2' # don't know how to access this
+    puts 'END initialize'
+  end
+  def method
+    puts 'START method'
+    puts @@var # class variable
+    #puts self.class.var # tries to call Variable.var
+    puts @var # instance variable
+    #puts self.var # var method if there was one
+    #puts var # var method if there was one
+    puts self.class.instance_variable_get(:@var) # class-instance variable
+    puts 'END method'
+  end
+  def self.method
+    puts 'START self.method'
+    puts @@var # class variable
+    #puts self.class.var # tries to call Class.var
+    puts @var # class-instance variable
+    #puts self.var # tries to call Varible.var
+    #puts var # tries to call Variable.var
+    puts 'END self.method'
+  end
+end
+
+Accessors:
+- attr_accessor
+- attr_reader
+- attr_writer
+
+Percent Strings:
+# Percent strings are a ruby object literal syntax consisting of '%', optionally followed by a letter. For example, %(abc) and %q(abc) both create the String "abc". An uppercase letter allows interpolation and escaped characters while a lowercase letter disables them. The '()' delimiters can be substituted by most other non-alphanumeric characters such as '[]', '{}, '<>', '%%', '||', '^^'.
+% # String
+%i # Array of Symbols
+%q # String
+%r # Regular Expression
+%s # Symbol
+%w # Array of Strings
+%x # Backtick (capture subshell result)
+
+Rails Resource Methods:
+- create
+- count
+- all
+
+
+A block created with lambda behaves like a method when you use return and simply exits the block, handing control back to the calling method.
+A block created with Proc.new behaves like it’s a part of the calling method when return is used within it, and returns from both the block itself as well as the calling method.
+
+
+Multiple Assignment Destructuring:
+a, b = [:foo, :bar]
+a # :foo
+b # :bar
+
+a = [:foo, :bar]
+a # [:foo, :bar]
+
+Classes:
+class ClassName < ClassName # inheritance
+class << obj # ?instance-level? mixin definition syntax meaning: “build me a new class just for object obj”
+obj.extend(Module) # for adding class methods
+Class.include(Module) # for adding methods to an instance of a class
+
+
+# Include vs Extend
+module Foo
+  def foo
+    puts 'instance'
+  end
+  def self.foo
+    puts 'class'
+  end
+end
+
+Foo.foo # class
+
+class Bar
+  include Foo
+end
+
+Bar.new.foo # instance
+Bar.foo # undefined method
+
+class Baz
+  extend Foo
+end
+
+Baz.foo # instance
+Baz.new.foo # undefined method
